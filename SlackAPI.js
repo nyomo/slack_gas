@@ -18,7 +18,11 @@ class SlackAPI {
     }
     return UrlFetchApp.fetch("https://slack.com/api/" + endpoint + "?token=" + this.token + optstr);
   }
-  channels_list(options){
+  channels_list(options = {exclude_archived:true,exclude_members:true}){
+    /*
+    チャンネルの一覧を取得する
+    アーカイブ済みのチャンネルとチャンネルのメンバーはデフォルトで取得しないようにしている
+    */
     var list = JSON.parse(this.post("channels.list",options));
     var result = Array();
     if(list["ok"] == true){
