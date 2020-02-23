@@ -37,20 +37,15 @@ class SlackAPI {
       return -1;
     }
   }
-  debug(options){
-    var list = JSON.parse(this.post("channels.list",options));
-    var result = Array();
-    if(list["ok"] == true){
-      this.channels = result.concat(this.channels,list.channels)
-      Logger.log("DEBUG0:" + this.channels.length);
-      while(Object.keys(list).indexOf('response_metadata') !== -1 && Object.keys(list.response_metadata).indexOf('next_cursor') !== -1 && list.response_metadata.next_cursor.length > 1){
-        Logger.log("DEBUG1:" + Object.keys(list).indexOf('response_metadata'));
-        list = JSON.parse(this.post("channels.list",{cursor:list["response_metadata"]["next_cursor"]}));
-        this.channels = result.concat(this.channels,list.channels)
-      }
-      return this.channels;
-    }else{
-      return -1;
+  channel_name2id(channel_name){
+    if(this.channels.length == 0){
+      this.channels_list();
     }
+    var result =  this.channels.find((channel) => {
+      return (channel.name === channel_name);
+    });
+    return result.id;
+  }
+  debug(options){
   }
 }
