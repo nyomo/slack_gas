@@ -28,7 +28,8 @@ class SlackAPI {
     if(list["ok"] == true && this.channels_list.length == 0){
       this.channels = result.concat(this.channels,list.channels)
       while(Object.keys(list).indexOf('response_metadata') !== -1 && Object.keys(list.response_metadata).indexOf('next_cursor') !== -1 && list.response_metadata.next_cursor.length > 1){
-        list = JSON.parse(this.post("channels.list",{cursor:list["response_metadata"]["next_cursor"]}));
+        options['cursor'] = list["response_metadata"]["next_cursor"];
+        list = JSON.parse(this.post("channels.list",options));
         this.channels = result.concat(this.channels,list.channels)
       }
       return this.channels;
