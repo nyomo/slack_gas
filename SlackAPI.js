@@ -37,6 +37,27 @@ class SlackAPI {
       return -1;
     }
   }
+  conversations_members(channel_id,options = {}){
+    /*
+    チャンネルなどのメンバー一覧を取得する
+    */
+    var api1 = "conversations";
+    var api2 = "members";
+    options['channel'] = channel_id;
+    var list = JSON.parse(this.post(api1 + "." + api2,options));
+    var result = Array();
+    if(list["ok"] == true){
+      result = result.concat(list[api2])
+      while(Object.keys(list).indexOf('response_metadata') !== -1 && Object.keys(list.response_metadata).indexOf('next_cursor') !== -1 && list.response_metadata.next_cursor.length > 1){
+        options['cursor'] = list["response_metadata"]["next_cursor"];
+        list = JSON.parse(this.post(api1 + "." + api2,options));
+        result = result.concat(list[api2])
+      }
+      return result;
+    }else{
+      return -1;
+    }
+  }
   channel_name2id(channel_name){
     if(this.channels.length == 0){
       this.channels_list();
