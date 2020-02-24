@@ -44,7 +44,11 @@ class SlackAPI {
     var result =  this.channels.find((channel) => {
       return (channel.name === channel_name);
     });
-    return result.id;
+    if(result != null){
+      return result.id;
+    }else{
+      return null;
+    }
   }
   debug(options){
   }
