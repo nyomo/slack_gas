@@ -74,7 +74,7 @@ class SlackAPI {
   }
   users_list(options = {}){
     /*
-    チャンネルなどのメンバー一覧を取得する
+    現在のワークスペースの全てのメンバーを取得する
     */
     var api1 = "users";
     var api2 = "list";
