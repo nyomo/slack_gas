@@ -2,6 +2,7 @@ class SlackAPI {
   constructor(token){
     this.token = token;
     this.channels = {};
+    this.members = this.users_list();
   }
   auth_test(){
     return this.post("auth.test","");
@@ -71,6 +72,28 @@ class SlackAPI {
       return null;
     }
   }
+  users_list(options = {}){
+    /*
+    チャンネルなどのメンバー一覧を取得する
+    */
+    var api1 = "users";
+    var api2 = "list";
+    var data_name = "members";
+    var list = JSON.parse(this.post(api1 + "." + api2,options));
+    var result = Array();
+    if(list["ok"] == true){
+      result = result.concat(list[data_name])
+      while(Object.keys(list).indexOf('response_metadata') !== -1 && Object.keys(list.response_metadata).indexOf('next_cursor') !== -1 && list.response_metadata.next_cursor.length > 1){
+        options['cursor'] = list["response_metadata"]["next_cursor"];
+        list = JSON.parse(this.post(api1 + "."+ api2,options));
+        result = result.concat(list[data_name])
+      }
+      return result;
+    }else{
+      return -1;
+    }
+  }
+
   debug(options){
   }
 }
