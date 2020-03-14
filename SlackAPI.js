@@ -19,6 +19,10 @@ class SlackAPI {
     }
     return UrlFetchApp.fetch("https://slack.com/api/" + endpoint + "?token=" + this.token + optstr);
   }
+  chat_postMessage(options){
+    var result = this.post("chat.postMessage",options);
+    return result;
+  }
   channels_list(options = {exclude_archived:true,exclude_members:true}){
     /*
     チャンネルの一覧を取得する
