@@ -68,8 +68,11 @@ class SlackAPI {
     }
   }
   channel_name2id(channel_name){
-    if(this.channels.length == 0){
-      this.channels_list();
+    this.channels = this.channels_list();
+    for(var i in this.channels){
+      if(this.channels[i]['name'] == channel_name){
+        return this.channels[i]['id'];
+      }
     }
     var result =  this.channels.find((channel) => {
       return (channel.name === channel_name);
