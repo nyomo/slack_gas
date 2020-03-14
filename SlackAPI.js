@@ -38,9 +38,14 @@ class SlackAPI {
       }
       return this.channels;
     }else{
-      return -1;
+      if(this.channels_list.length != 0){
+        return this.channels;
+      }else{
+        return -1;
+      }
     }
   }
+
   conversations_members(channel_id,options = {}){
     /*
     チャンネルなどのメンバー一覧を取得する
