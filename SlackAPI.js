@@ -74,14 +74,16 @@ class SlackAPI {
         return this.channels[i]['id'];
       }
     }
-    var result =  this.channels.find((channel) => {
-      return (channel.name === channel_name);
-    });
-    if(result != null){
-      return result.id;
-    }else{
-      return null;
+    return -1;
+  }
+  get_channel_details(channel_name){
+    var id = this.channel_name2id(channel_name);
+    for(var i in this.channels){
+      if(this.channels[i]['name'] == channel_name){
+        return this.channels[i];
+      }
     }
+    return -1;
   }
   users_list(options = {}){
     /*
