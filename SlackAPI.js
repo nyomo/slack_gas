@@ -31,7 +31,7 @@ class SlackAPI {
       while(Object.keys(list).indexOf('response_metadata') !== -1 && Object.keys(list.response_metadata).indexOf('next_cursor') !== -1 && list.response_metadata.next_cursor.length > 1){
         options['cursor'] = list["response_metadata"]["next_cursor"];
         list = JSON.parse(this.post("channels.list",options));
-        this.channels = result.concat(this.channels,list.channels)
+        this.channels = result.concat(this.channels,list["channels"])
       }
       return this.channels;
     }else{
