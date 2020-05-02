@@ -123,6 +123,15 @@ class SlackAPI {
       return -1;
     }
   }
+  user_name2id(user_name){
+    this.users = this.users_list();
+    for(var i in this.users){
+      if(this.users[i]['name'] == user_name){
+        return this.users[i]['id'];
+      }
+    }
+    return -1;
+  }
 
   debug(options){
   }
