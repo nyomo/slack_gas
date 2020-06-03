@@ -147,12 +147,17 @@ class SlackAPI {
       return ret;
     }
   }
-  user_name2id(user_name){
-    this.users = this.users_list();
-    for(var i in this.users){
-      if(this.users[i]['name'] == user_name){
-        return this.users[i]['id'];
+  email2userid(email){
+    var list = this.email2id_list;
+    var target = list.find(function(user){
+      if(user.email == email){
+        return(user);
       }
+    });
+    if(target.length == 0){
+      return -1;
+    }else{
+      return target.id;
     }
     return -1;
   }
