@@ -2,6 +2,7 @@ class SlackAPI {
   constructor(token){
     this.token = token;
     this.channels = {};
+    this.members = Array();
     this.members = this.users_list();
   }
   auth_test(){
@@ -109,14 +110,23 @@ class SlackAPI {
     var api1 = "users";
     var api2 = "list";
     var data_name = "members";
-    var list = JSON.parse(this.post(api1 + "." + api2,options));
-    var result = Array();
-    if(list["ok"] == true){
-      result = result.concat(list[data_name])
-      while(Object.keys(list).indexOf('response_metadata') !== -1 && Object.keys(list.response_metadata).indexOf('next_cursor') !== -1 && list.response_metadata.next_cursor.length > 1){
-        options['cursor'] = list["response_metadata"]["next_cursor"];
-        list = JSON.parse(this.post(api1 + "."+ api2,options));
-        result = result.concat(list[data_name])
+    // すでにthis.membersが設定されていたらAPIにアクセスしない
+    if(this.members.length > 0){
+       return this.members;
+    }else{
+      var result = this.post(api1 + "." + api2,options);
+      var list = JSON.parse(result);
+      var ret = Array();
+      if(list["ok"] == true){
+        ret = ret.concat(list[data_name])
+        while(Object.keys(list).indexOf('response_metadata') !== -1 && Object.keys(list.response_metadata).indexOf('next_cursor') !== -1 && list.response_metadata.next_cursor.length > 1){
+          options['cursor'] = list["response_metadata"]["next_cursor"];
+          list = JSON.parse(this.post(api1 + "."+ api2,options));
+          ret = ret.concat(list[data_name]);
+        }
+        return ret;
+      }else{
+        return result;
       }
       return result;
     }else{
