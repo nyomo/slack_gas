@@ -4,6 +4,8 @@ class SlackAPI {
     this.channels = {};
     this.members = Array();
     this.members = this.users_list();
+    this.email2id_list = Array();
+    this.email2id_list = this.convert_users_list();
   }
   auth_test(){
     return this.post("auth.test","");
@@ -128,9 +130,21 @@ class SlackAPI {
       }else{
         return result;
       }
-      return result;
+    }
+  }
+  convert_users_list(){
+    var ret = Array();
+    if(this.email2id_list.length > 0){
+      return this.email2id_list;
     }else{
-      return -1;
+      for(var i = 0;i < this.members.length;i++){
+        var email = this.members[i]['profile']['email'];
+        ret[i] = {
+                  email:this.members[i]['profile']['email'],
+                  id:this.members[i]['id']
+                  };
+      }
+      return ret;
     }
   }
   user_name2id(user_name){
