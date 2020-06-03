@@ -2,7 +2,10 @@ class SlackAPI {
   constructor(token){
     this.token = token;
     this.channels = {};
+    this.members = Array();
     this.members = this.users_list();
+    this.email2id_list = Array();
+    this.email2id_list = this.convert_users_list();
   }
   auth_test(){
     return this.post("auth.test","");
@@ -109,26 +112,52 @@ class SlackAPI {
     var api1 = "users";
     var api2 = "list";
     var data_name = "members";
-    var list = JSON.parse(this.post(api1 + "." + api2,options));
-    var result = Array();
-    if(list["ok"] == true){
-      result = result.concat(list[data_name])
-      while(Object.keys(list).indexOf('response_metadata') !== -1 && Object.keys(list.response_metadata).indexOf('next_cursor') !== -1 && list.response_metadata.next_cursor.length > 1){
-        options['cursor'] = list["response_metadata"]["next_cursor"];
-        list = JSON.parse(this.post(api1 + "."+ api2,options));
-        result = result.concat(list[data_name])
-      }
-      return result;
+    // すでにthis.membersが設定されていたらAPIにアクセスしない
+    if(this.members.length > 0){
+       return this.members;
     }else{
-      return -1;
+      var result = this.post(api1 + "." + api2,options);
+      var list = JSON.parse(result);
+      var ret = Array();
+      if(list["ok"] == true){
+        ret = ret.concat(list[data_name])
+        while(Object.keys(list).indexOf('response_metadata') !== -1 && Object.keys(list.response_metadata).indexOf('next_cursor') !== -1 && list.response_metadata.next_cursor.length > 1){
+          options['cursor'] = list["response_metadata"]["next_cursor"];
+          list = JSON.parse(this.post(api1 + "."+ api2,options));
+          ret = ret.concat(list[data_name]);
+        }
+        return ret;
+      }else{
+        return result;
+      }
     }
   }
-  user_name2id(user_name){
-    this.users = this.users_list();
-    for(var i in this.users){
-      if(this.users[i]['name'] == user_name){
-        return this.users[i]['id'];
+  convert_users_list(){
+    var ret = Array();
+    if(this.email2id_list.length > 0){
+      return this.email2id_list;
+    }else{
+      for(var i = 0;i < this.members.length;i++){
+        var email = this.members[i]['profile']['email'];
+        ret[i] = {
+                  email:this.members[i]['profile']['email'],
+                  id:this.members[i]['id']
+                  };
       }
+      return ret;
+    }
+  }
+  email2userid(email){
+    var list = this.email2id_list;
+    var target = list.find(function(user){
+      if(user.email == email){
+        return(user);
+      }
+    });
+    if(target.length == 0){
+      return -1;
+    }else{
+      return target.id;
     }
     return -1;
   }
