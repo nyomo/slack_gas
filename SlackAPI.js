@@ -105,6 +105,13 @@ class SlackAPI {
     }
     return -1;
   }
+  users_info(USERID){
+    const api1 = "users";
+    const api2 = "info";
+    const options = { user: USERID };
+    var result = JSON.parse(this.post(api1 + "." + api2,options));
+    return result;
+  }
   users_list(options = {}){
     /*
     現在のワークスペースの全てのメンバーを取得する
