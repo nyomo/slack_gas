@@ -23,7 +23,7 @@ class SlackAPI {
                           };
       post_options['muteHttpExceptions'] = true;
       const url = "https://slack.com/api/" + endpoint;
-      result = UrlFetchApp.fetch(url,post_options);
+      result = this.http_access(url,post_options);
       return result;
     }
   }
@@ -39,7 +39,14 @@ class SlackAPI {
       }
     }
     const url = "https://slack.com/api/" + endpoint + "?token=" + this.token + optstr;
-    result = UrlFetchApp.fetch(url);
+    result = this.http_access(url);
+    return result;
+  }
+  http_access(url,options = {}){
+    var result;
+    Logger.log(url);
+    result = UrlFetchApp.fetch(url,options);
+    Logger.log(result.getResponseCode());
     return result;
   }
   chat_postMessage(options){
