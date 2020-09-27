@@ -21,7 +21,7 @@ class SlackAPI {
                             },
                             'payload' : JSON.stringify(options)
                           };
-      post_options['muteHttpExceptions'] = 'true';
+      post_options['muteHttpExceptions'] = true;
       const url = "https://slack.com/api/" + endpoint;
       result = UrlFetchApp.fetch(url,post_options);
       return result;
