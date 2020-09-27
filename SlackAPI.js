@@ -11,6 +11,7 @@ class SlackAPI {
     return this.post("auth.test","");
   }
   postJSON(endpoint,options = null){
+    var result;
     if(options != null){
 
       var post_options = { 'method' : 'post',
@@ -20,11 +21,15 @@ class SlackAPI {
                             },
                             'payload' : JSON.stringify(options)
                           };
-      return UrlFetchApp.fetch("https://slack.com/api/" + endpoint,post_options);
+      post_options['muteHttpExceptions'] = 'true';
+      const url = "https://slack.com/api/" + endpoint;
+      result = UrlFetchApp.fetch(url,post_options);
+      return result;
     }
   }
   post(endpoint,options = null){
     var optstr = "";
+    var result;
     if(options != null){
       for(var key in options){
         if(options.hasOwnProperty(key)) {
@@ -33,7 +38,9 @@ class SlackAPI {
         }
       }
     }
-    return UrlFetchApp.fetch("https://slack.com/api/" + endpoint + "?token=" + this.token + optstr);
+    const url = "https://slack.com/api/" + endpoint + "?token=" + this.token + optstr;
+    result = UrlFetchApp.fetch(url);
+    return result;
   }
   chat_postMessage(options){
     var result = this.postJSON("chat.postMessage",options);
@@ -112,7 +119,9 @@ class SlackAPI {
       }
     }
   }
-  
+
+
+
   conversations_members(channel_id,options = {}){
     /*
     チャンネルなどのメンバー一覧を取得する
