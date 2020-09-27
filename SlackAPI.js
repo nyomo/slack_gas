@@ -66,6 +66,53 @@ class SlackAPI {
     }
   }
 
+  conversations_list(options = {exclude_archived:true}){
+    var api1 = "conversations";
+    var api2 = "list";    
+    /*
+    チャンネルの一覧を取得する
+    アーカイブ済みのチャンネルはデフォルトで取得しないようにしている
+    channels.listと違ってconversations.listにはメンバーのリストは含まれない
+    */
+    var list = JSON.parse(this.post(api1 + "." + api2,options));
+    var result = Array();
+    if(list["ok"] == true && this.channels_list.length == 0){
+      this.channels = result.concat(this.channels,list.channels)
+      while(Object.keys(list).indexOf('response_metadata') !== -1
+            && Object.keys(list.response_metadata).indexOf('next_cursor') !== -1
+            && list.response_metadata.next_cursor.length > 1)
+      {
+        options['cursor'] = list["response_metadata"]["next_cursor"];
+        list = JSON.parse(this.post("channels.list",options));
+        this.channels = result.concat(this.channels,list["channels"])
+      }
+      
+      //プライベートチャンネルを取得する
+      options['types'] = 'private_channel';
+      list = JSON.parse(this.post(api1 + "." + api2,options));
+      if(list["ok"] == true && this.channels_list.length == 0){
+        this.channels = result.concat(this.channels,list.channels)
+        while(Object.keys(list).indexOf('response_metadata') !== -1
+              && Object.keys(list.response_metadata).indexOf('next_cursor') !== -1
+              && list.response_metadata.next_cursor.length > 1)
+        {
+          options['cursor'] = list["response_metadata"]["next_cursor"];
+          list = JSON.parse(this.post("channels.list",options));
+          this.channels = result.concat(this.channels,list["channels"])
+        }
+      }else{
+        return -1;
+      }
+      return this.channels;
+    }else{
+      if(this.channels_list.length != 0){
+        return this.channels;
+      }else{
+        return -1;
+      }
+    }
+  }
+  
   conversations_members(channel_id,options = {}){
     /*
     チャンネルなどのメンバー一覧を取得する
