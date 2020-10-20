@@ -3,9 +3,9 @@ class SlackAPI {
     this.token = token;
     this.channels = {};
     this.members = Array();
-    this.members = this.users_list();
+    //this.members = this.users_list();
     this.email2id_list = Array();
-    this.email2id_list = this.convert_users_list();
+    //this.email2id_list = this.convert_users_list();
   }
   auth_test(){
     return this.post("auth.test","");
@@ -202,18 +202,17 @@ class SlackAPI {
     }
   }
   email2userid(email){
-    var list = this.email2id_list;
-    var target = list.find(function(user){
-      if(user.email == email){
-        return(user);
-      }
-    });
-    if(target.length == 0){
-      return -1;
+  	//https://slack.com/api/users.lookupByEmail
+    const api1 = "users";
+    const api2 = "lookupByEmail";
+    const options = { email: email };
+    var result = this.post(api1 + "." + api2,options);
+    var list = JSON.parse(result);
+      return list.user.id;
+    if(list.ok == "true"){
     }else{
-      return target.id;
+      return null;
     }
-    return -1;
   }
 
   debug(options){
